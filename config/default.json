@@ -1,0 +1,8 @@
+{
+  "jwtPrivateKey": "asdf123098",
+  //"dbUri":"mongodb://localhost:27017/?readPreference=primary&ssl=false&directConnection=true",
+  "dbUri": "mongodb+srv://mb:mboffice123@cluster-myarbit.rzmt4fs.mongodb.net/?retryWrites=true&w=majority",
+  //"dbUri": "mongodb+srv://awais:awais@cluster0.tpfm3.mongodb.net/BaltiApp?retryWrites=true&w=majority",
+  "email": "",
+  "password": ""
+}
