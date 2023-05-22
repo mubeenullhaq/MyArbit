@@ -2,7 +2,8 @@ const joi = require("joi");
 var mongoose = require("mongoose");
 
 var stakingsSchema = mongoose.Schema({
-  staking_id: String,
+  pool_id: String,
+  partner_id: String,
   amount: String,
   status: {
     type: String,
