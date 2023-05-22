@@ -1,6 +1,6 @@
 {
-  "jwtPrivateKey": "baltiApp_jwtPrivateKey",
-  "dbUri": "baltiApp_dbUri",
-  "email": "baltiApp_email",
-  "password": "baltiApp_password"
+  "jwtPrivateKey": "myArbit_jwtPrivateKey",
+  "dbUri": "myArbit_dbUri",
+  "email": "myArbit_email",
+  "password": "myArbit_password"
 }
