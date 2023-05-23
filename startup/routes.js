@@ -1,6 +1,6 @@
 const express = require("express");
 const cors = require("cors");
-// const users = require("../routes/users");
+const users = require("../routes/users");
 // const profile = require("../routes/profile");
 // const products = require("../routes/products");
 // const countries = require("../routes/countries");
@@ -31,13 +31,13 @@ const cors = require("cors");
 // const test = require("../routes/test");
 
 module.exports = function (app) {
- // app.use(xmlparser());
+  // app.use(xmlparser());
   app.use(express.json());
   //app.use('/uploads/', express.static('uploads'))
   app.use(cors());
   app.options("*", cors());
   // app.use('/',hello)
-  // app.use("/api/user", users);
+  app.use("/api/user", users);
   // app.use("/api/profile", profile);
   // app.use("/api/scrape", scrape);
   // app.use("/api/forgotPassword", forgotPassword);
