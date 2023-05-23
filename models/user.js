@@ -1,4 +1,4 @@
-const joi = require("joi");
+const Joi = require("joi");
 const config = require("config");
 const jwt = require("jsonwebtoken");
 var mongoose = require("mongoose");
@@ -9,6 +9,7 @@ var userSchema = mongoose.Schema({
   email: String,
   phone: String,
   password: String,
+  repeat_password: String,
   address: String,
   role: {
     type: String,
@@ -35,21 +36,29 @@ userSchema.methods.generateAuthToken = function () {
 };
 
 function validate(user) {
-  const schema = {
-    name: joi.string().min(2).max(50).required(),
-    dob: joi.date().required(),
-    email: joi.string().min(5).max(255).required().email().required(),
-    phone: joi.string(),
-    password: joi.string().min(5).max(255).required(),
-    address: joi.string(),
-    role: joi.string(),
-    isBlocked: joi.boolean(),
-    refferal_code: joi.string(),
-    reffered_by: joi.string(),
-    created_at: joi.date().required(),
-    country: joi.string().required(),
-  };
-  return joi.validate(user, schema);
+  const schema = Joi.object({
+    name: Joi.string().min(2).max(50).required(),
+    dob: Joi.date().required(),
+    email: Joi.string().email().required(),
+    phone: Joi.string(),
+    password: Joi.string()
+      .pattern(/^[a-zA-Z0-9]{3,30}$/)
+      .required(),
+    repeat_password: Joi.ref("password"),
+    address: Joi.string(),
+    role: Joi.string(),
+    isBlocked: Joi.boolean(),
+    refferal_code: Joi.string(),
+    reffered_by: Joi.string(),
+    country: Joi.string().required(),
+    //access_token: [Joi.string(), Joi.number()],
+    //  birth_year: Joi.number().integer().min(1900).max(2013),
+  })
+    //.with("username", "birth_year")
+    //.xor("password", "access_token")
+    .with("password", "repeat_password");
+
+  return schema.validate(user);
 }
 
 function validateUpdate(user) {
