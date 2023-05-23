@@ -7,44 +7,48 @@ var router = express.Router();
 
 //User Login
 router.post("/login", async (req, res) => {
-  // const { error } = validate(req.body);
-  // if (error) return res.status(400).send(error.details[0].message);
-  //return res.send('ok')
-  let lowerEmail = req.body.email.toLowerCase();
-  let user = await User.findOne({ email: lowerEmail });
-  if (!user) return res.status(400).send("Invalid email or password");
-  // const createdAt = new mongoose.Types.ObjectId(user._id).getTimestamp()
-  // console.log(createdAt)
-  // return
-  const isValidPassword = await bcrypt.compare(
-    req.body.password,
-    user.password
-  );
+  try {
+    // const { error } = validate(req.body);
+    // if (error) return res.status(400).send(error.details[0].message);
+    //return res.send('ok')
+    if (!req.body.email) return res.status(400).send("Email required...");
+    if (!req.body.password) return res.status(400).send("Password required...");
+    let lowerEmail = req.body.email.toLowerCase();
+    let user = await User.findOne({ email: lowerEmail });
+    if (!user) return res.status(400).send("Invalid email or password");
+    // const createdAt = new mongoose.Types.ObjectId(user._id).getTimestamp()
+    // console.log(createdAt)
+    // return
+    const isValidPassword = await bcrypt.compare(
+      req.body.password,
+      user.password
+    );
 
-  if (!isValidPassword)
-    return res.status(400).send("Invalid email or password");
+    if (!isValidPassword)
+      return res.status(400).send("Invalid email or password");
 
-  const token = user.generateAuthToken();
+    const token = user.generateAuthToken();
 
-  const userObj = {
-    id: user.id,
-    name: user.name,
-    email: user.email,
-    //role: user.role,
-    //refferal_code: user.refferal_code,
-    //isMember: user.isMember,
-  };
+    const userObj = {
+      id: user.id,
+      name: user.name,
+      email: user.email,
+    };
 
-  const reponse = {
-    token,
-    user: userObj,
-  };
-  return res.send(reponse);
+    const reponse = {
+      token,
+      user: userObj,
+    };
+    return res.send(reponse);
+  } catch (e) {
+    res.status(500).send(e.message);
+  }
 });
 
 //Create User
 router.post("/", async (req, res, next) => {
   try {
+    //return res.status(200).send("Working...");
     const { error } = validate(req.body);
     if (error) return res.status(400).send(error.details[0].message);
 
