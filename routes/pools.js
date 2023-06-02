@@ -26,6 +26,12 @@ router.post("/", async (req, res, next) => {
     return res.status(500).send(e.message);
   }
 });
+//Read All Pools
+router.get("/", async (req, res, next) =>{
+  const pools = await Pools.find();
+  if(!pools) res.status(404).send("No Pools exist. Please create pool first.");
+  return res.status(200).send(pools);
+})
 //Update User by ID
 router.put("/", [auth], async (req, res, next) => {
   try {
