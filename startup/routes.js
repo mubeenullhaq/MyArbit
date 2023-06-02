@@ -1,6 +1,8 @@
 const express = require("express");
 const cors = require("cors");
 const users = require("../routes/users");
+const pools = require("../routes/pools");
+const stakings = require("../routes/stakings");
 // const profile = require("../routes/profile");
 // const products = require("../routes/products");
 // const countries = require("../routes/countries");
@@ -38,6 +40,9 @@ module.exports = function (app) {
   app.options("*", cors());
   // app.use('/',hello)
   app.use("/api/user", users);
+  app.use("/api/pools", pools);
+  app.use("/api/stakings", stakings);
+
   // app.use("/api/profile", profile);
   // app.use("/api/scrape", scrape);
   // app.use("/api/forgotPassword", forgotPassword);
