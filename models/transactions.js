@@ -4,26 +4,24 @@ var mongoose = require("mongoose");
 
 var transactionsSchema = mongoose.Schema({
   partner_id: String,
-  type: String,
+  type: {
+    type: String,
+    enum: ['deposit, withdraw'],
+  },
   amount: String,
+  created_at: {
+    type: Date,
+    required: true,
+  },
 });
 
-function validate(transaction) {
-  const schema = {
-    name: joi.string().min(2).max(50).required(),
-    dob: joi.date().required(),
-    email: joi.string().min(5).max(255).required().email().required(),
-    phone: joi.string(),
-    password: joi.string().min(5).max(255).required(),
-    address: joi.string(),
-    role: joi.string(),
-    isBlocked: joi.boolean(),
-    refferal_code: joi.string(),
-    reffered_by: joi.string(),
-    created_at: joi.date().required(),
-    country: joi.string().required(),
-  };
-  return joi.validate(transaction, schema);
+function validate(staking) {
+  const schema = Joi.object({
+    //partner_id: Joi.string().required(),
+    type: Joi.string().valid('deposit', 'withdraw').required(),
+    amount: Joi.number(),
+  });
+  return schema.validate(staking);
 }
 
 var Transactions = mongoose.model("Transactions", transactionsSchema);
