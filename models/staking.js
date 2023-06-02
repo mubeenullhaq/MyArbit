@@ -5,6 +5,7 @@ var stakingsSchema = mongoose.Schema({
   pool_id: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Pools",
+    required: true,
   },
   pool_info: {
     type: Object,
@@ -13,6 +14,7 @@ var stakingsSchema = mongoose.Schema({
   partner_id: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
+    required: true,
   },
   amount: String,
   status: {
@@ -28,11 +30,6 @@ var stakingsSchema = mongoose.Schema({
 function validate(staking) {
   const schema = Joi.object({
     pool_id: Joi.string().required(),
-    pool_info: Joi.object({
-      pool_name: Joi.string(),
-      profit: Joi.number(),
-    }),
-    partner_id: Joi.string().required(),
     amount: Joi.number().required(),
     status: Joi.string(),
     created_at: Joi.date(),
