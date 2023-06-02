@@ -13,7 +13,7 @@ router.post("/", async (req, res, next) => {
 
     let lowerPoolName = req.body.name.toLowerCase();
     let pool = await Pools.findOne({ name: lowerPoolName });
-    if (pool) return res.status(400).send("User alredy registered");
+    if (pool) return res.status(400).send("Pool name alredy registered");
 
     pool = new Pools(
       _.pick(req.body, ["name", "min_stake", "duration", "profit"])
