@@ -1,29 +1,35 @@
 var express = require("express");
 const { Stakings, validate } = require("../models/staking");
 const { Pools } = require("../models/pool");
+const auth = require("../middleware/auth")
 
 // const auth = require("../middleware/auth");
 const _ = require("lodash");
 var router = express.Router();
 
 //Create Staking
-router.post("/", async (req, res, next) => {
+router.post("/", [auth],async (req, res, next) => {
   try {
     //return res.status(200).send("Working...");
     const { error } = validate(req.body);
     if (error) return res.status(400).send(error.details[0].message);
-    let poolId = req.body.pool_id;
+    const poolId = req.body.pool_id;
+    const staking_amount = req.body.amount; 
     let pool = await Pools.findById(poolId);
-    if (!pool)
-      return res.status(404).send(`Pool Not found for the ID: ${poolId} `);
-
+    
+    //Valid Staking Checks
+    if (!pool) return res.status(404).send(`Pool Not found for the ID: ${poolId} `);
+    if(staking_amount < pool.min_stake) return res.status(400).send(`${staking_amount} staking amount is less than minimum staking allowed i.e ${pool.min_stake}.`)
+    
     let staking = new Stakings(
-      _.pick(req.body, ["pool_id", "partner_id", "amount"])
+      _.pick(req.body, ["pool_id", "amount"])
     );
     staking.set({
       created_at: Date.now(),
+      partner_id: req.user._id,
       pool_info: {
         name: pool.name,
+        duration: pool.duration,
         profit: pool.profit,
       },
     });
