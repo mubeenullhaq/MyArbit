@@ -31,5 +31,17 @@ router.post("/", [auth],async (req, res, next) => {
   }
 });
 
+//Read All transactions admin only
+router.get("/", [auth, admin], async (req, res, next) => {
+  try {
+    let transactions = await Transactions.find();
+    if (!transactions) {
+      return res.status(400).send({ message: "No transactions found." });
+    }
+    return res.status(200).send(transactions);
+  } catch (e) {
+    return res.send(e);
+  }
+});
 
 module.exports = router;
