@@ -16,6 +16,10 @@ var stakingsSchema = mongoose.Schema({
     ref: "User",
     required: true,
   },
+  partner_info: {
+    type: Object,
+    required: true,
+  },
   amount: String,
   status: {
     type: String,
