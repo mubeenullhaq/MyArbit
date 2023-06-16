@@ -6,7 +6,11 @@ var mongoose = require("mongoose");
 var userSchema = mongoose.Schema({
   name: String,
   dob: String,
-  email: String,
+  email:{
+    type: String,
+    unique: true,
+
+  },
   phone: String,
   password: String,
   repeat_password: String,
@@ -24,6 +28,7 @@ var userSchema = mongoose.Schema({
   balance: String,
   created_at: String,
   country: String,
+  is_varified: Boolean
 });
 userSchema.methods.generateAuthToken = function () {
   const token = jwt.sign(
@@ -38,7 +43,7 @@ userSchema.methods.generateAuthToken = function () {
 function validate(user) {
   const schema = Joi.object({
     name: Joi.string().min(2).max(50).required(),
-    dob: Joi.date().required(),
+    dob: Joi.date(),
     email: Joi.string().email().required(),
     phone: Joi.string(),
     password: Joi.string()
@@ -50,7 +55,7 @@ function validate(user) {
     isBlocked: Joi.boolean(),
     refferal_code: Joi.string(),
     reffered_by: Joi.string(),
-    country: Joi.string().required(),
+    country: Joi.string(),
     //access_token: [Joi.string(), Joi.number()],
     //  birth_year: Joi.number().integer().min(1900).max(2013),
   })
