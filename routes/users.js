@@ -36,7 +36,7 @@ router.post("/login", async (req, res) => {
     };
 
     const reponse = {
-      token,
+      idToken: token,
       user: userObj,
     };
     return res.send(reponse);
@@ -72,7 +72,17 @@ router.post("/", async (req, res, next) => {
     user.password = await bcrypt.hash(req.body.password, salt);
 
     await user.save();
-    return res.status(200).send(user);
+    const token = user.generateAuthToken();
+    const userObj = {
+      id: user.id,
+      name: user.name,
+      email: user.email,
+    };
+    const reponse = {
+      idToken: token,
+      user: userObj,
+    };
+    return res.status(200).send(reponse);
   } catch (e) {
     return res.status(500).send(e);
   }
