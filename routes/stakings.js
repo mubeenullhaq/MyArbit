@@ -20,6 +20,8 @@ router.post("/", [auth],async (req, res, next) => {
     let user = await User.findById(req.user._id);
     //Valid Staking Checks
     if (!pool) return res.status(404).send(`Pool Not found for the ID: ${poolId} `);
+    if (!user) return res.status(404).send(`User Not found.. `);
+
     if(staking_amount < pool.min_stake) return res.status(400).send(`${staking_amount} staking amount is less than minimum staking allowed i.e ${pool.min_stake}.`)
     
     let staking = new Stakings(
@@ -44,6 +46,31 @@ router.post("/", [auth],async (req, res, next) => {
       message: "Amount Staked Successfull",
       staking,
     });
+  } catch (e) {
+    return res.status(500).send(e.message);
+  }
+});
+
+//Read all Staking of a partner
+router.get("/", [auth],async (req, res, next) => {
+  try {
+    //return res.status(200).send("Working...");
+    //const { error } = validate(req.body);
+    //if (error) return res.status(400).send(error.details[0].message);
+    //const poolId = req.body.pool_id;
+    //const staking_amount = req.body.amount; 
+    // let pool = await Pools.findById(poolId);
+    // let user = await User.findById(req.user._id);
+    // //Valid Staking Checks
+    // if (!pool) return res.status(404).send(`Pool Not found for the ID: ${poolId} `);
+    // if(staking_amount < pool.min_stake) return res.status(400).send(`${staking_amount} staking amount is less than minimum staking allowed i.e ${pool.min_stake}.`)
+    let stakings = await Stakings.find({partner_id: req.user._id});
+    if(!stakings) return res.status(404).send("NO_STAKINGS_FOUND");
+    return res.status(200).send({
+      message: "Stakings List Retireved",
+      stakings,
+    });
+
   } catch (e) {
     return res.status(500).send(e.message);
   }
