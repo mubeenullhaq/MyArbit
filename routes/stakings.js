@@ -66,10 +66,7 @@ router.get("/", [auth],async (req, res, next) => {
     // if(staking_amount < pool.min_stake) return res.status(400).send(`${staking_amount} staking amount is less than minimum staking allowed i.e ${pool.min_stake}.`)
     let stakings = await Stakings.find({partner_id: req.user._id});
     if(!stakings) return res.status(404).send("NO_STAKINGS_FOUND");
-    return res.status(200).send({
-      message: "Stakings List Retireved",
-      stakings,
-    });
+    return res.status(200).send(stakings);
 
   } catch (e) {
     return res.status(500).send(e.message);
