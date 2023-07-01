@@ -39,10 +39,10 @@ router.post("/login", async (req, res) => {
       idToken: token,
       user: userObj,
     };
-    setTimeout(() => {
-      console.log("this is the first message");
-      return res.send(reponse);
-    }, 5000);
+   // setTimeout(() => {
+    //  console.log("this is the first message");
+    return res.send(reponse);
+    //}, 5000);
   
   } catch (e) {
     res.status(500).send(e.message);
