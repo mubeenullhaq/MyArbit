@@ -51,7 +51,7 @@ router.post("/", [auth],async (req, res, next) => {
   }
 });
 
-//Read all in process Stakings of a partner
+//Read all in process Stakings of a Logged In partner
 router.get("/", [auth],async (req, res, next) => {
   try {
     //return res.status(200).send("Working...");
@@ -72,6 +72,20 @@ router.get("/", [auth],async (req, res, next) => {
     return res.status(500).send(e.message);
   }
 });
+
+
+//Read all completed Stakings of a Logged In partner
+router.get("/history", [auth],async (req, res, next) => {
+  try {
+    let stakings = await Stakings.find({partner_id: req.user._id, status: 'completed'});
+    if(!stakings) return res.status(404).send("NO_STAKINGS_FOUND");
+    return res.status(200).send(stakings);
+
+  } catch (e) {
+    return res.status(500).send(e.message);
+  }
+});
+
 
 //Read Single Pool By ID
 router.get("/:id", async (req, res, next) => {
