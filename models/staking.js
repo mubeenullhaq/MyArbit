@@ -23,7 +23,11 @@ var stakingsSchema = mongoose.Schema({
   amount: String,
   status: {
     type: String,
-    default: "in process",
+    default: "in_process",
+    enum: {
+      values: ["in_process", "completed"],
+      message: "type must be either in_process or completed"
+    }
   },
   created_at: {
     type: String,
