@@ -51,7 +51,7 @@ router.post("/", [auth],async (req, res, next) => {
   }
 });
 
-//Read all Staking of a partner
+//Read all in process Stakings of a partner
 router.get("/", [auth],async (req, res, next) => {
   try {
     //return res.status(200).send("Working...");
@@ -64,7 +64,7 @@ router.get("/", [auth],async (req, res, next) => {
     // //Valid Staking Checks
     // if (!pool) return res.status(404).send(`Pool Not found for the ID: ${poolId} `);
     // if(staking_amount < pool.min_stake) return res.status(400).send(`${staking_amount} staking amount is less than minimum staking allowed i.e ${pool.min_stake}.`)
-    let stakings = await Stakings.find({partner_id: req.user._id});
+    let stakings = await Stakings.find({partner_id: req.user._id, status: 'in_process'});
     if(!stakings) return res.status(404).send("NO_STAKINGS_FOUND");
     return res.status(200).send(stakings);
 
