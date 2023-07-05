@@ -33,17 +33,18 @@ router.post("/login", async (req, res) => {
       id: user.id,
       name: user.name,
       email: user.email,
+      balance: user.balance,
+      total_staked: user.total_staked,
     };
 
     const reponse = {
       idToken: token,
       user: userObj,
     };
-   // setTimeout(() => {
+    // setTimeout(() => {
     //  console.log("this is the first message");
     return res.send(reponse);
     //}, 5000);
-  
   } catch (e) {
     res.status(500).send(e.message);
   }
