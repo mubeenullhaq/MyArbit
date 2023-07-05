@@ -6,10 +6,9 @@ var mongoose = require("mongoose");
 var userSchema = mongoose.Schema({
   name: String,
   dob: String,
-  email:{
+  email: {
     type: String,
     unique: true,
-
   },
   phone: String,
   password: String,
@@ -25,10 +24,17 @@ var userSchema = mongoose.Schema({
   },
   refferal_code: String,
   reffered_by: String,
-  balance: String,
+  balance: {
+    type: Number,
+    default: 0,
+  },
+  total_staked: {
+    type: Number,
+    default: 0,
+  },
   created_at: String,
   country: String,
-  is_varified: Boolean
+  is_varified: Boolean,
 });
 userSchema.methods.generateAuthToken = function () {
   const token = jwt.sign(
