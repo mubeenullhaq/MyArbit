@@ -7,6 +7,10 @@ var stakingsSchema = mongoose.Schema({
     ref: "Pools",
     required: true,
   },
+  auto_stake: {
+    type: Boolean,
+    default: false,
+  },
   pool_info: {
     type: Object,
     required: true,
@@ -20,14 +24,14 @@ var stakingsSchema = mongoose.Schema({
     type: Object,
     required: true,
   },
-  amount: String,
+  amount_staked: String,
   status: {
     type: String,
     default: "in_process",
     enum: {
       values: ["in_process", "completed"],
-      message: "type must be either in_process or completed"
-    }
+      message: "type must be either in_process or completed",
+    },
   },
   created_at: {
     type: String,
@@ -38,7 +42,8 @@ var stakingsSchema = mongoose.Schema({
 function validate(staking) {
   const schema = Joi.object({
     pool_id: Joi.string().required(),
-    amount: Joi.number().required(),
+    auto_stake: Joi.boolean(),
+    amount_staked: Joi.number().required(),
     status: Joi.string(),
     created_at: Joi.date(),
   });
