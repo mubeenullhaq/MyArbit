@@ -12,14 +12,14 @@ router.post("/", [auth, admin],async (req, res, next) => {
     const { error } = validate(req.body);
     if (error) return res.status(400).send(error.details[0].message);
 
-    let lowerPoolName = req.body.name.toLowerCase();
-    let pool = await Pools.findOne({ name: lowerPoolName });
+    let pool = await Pools.findOne({
+      name: { $regex: "^" + req.body.name + "$", $options: "i" },
+    });
     if (pool) return res.status(400).send("Pool name alredy registered");
 
     pool = new Pools(
       _.pick(req.body, ["name", "min_stake", "duration", "profit"])
     );
-    pool.set({ name: lowerPoolName });
     await pool.save();
 
     return res.status(200).send(pool);
