@@ -21,18 +21,11 @@ router.post("/", [auth], async (req, res, next) => {
     amount_staked = parseInt(amount_staked, 10);
 
     //Valid Staking Checks
-    if (!pool)
-      return res.status(404).send(`Pool Not found for the ID: ${poolId} `);
+    if (!pool) return res.status(404).send(`Pool Not found for the ID: ${poolId} `);
     if (!user) return res.status(404).send(`User Not found.. `);
 
-    if (amount_staked < pool.min_stake)
-      return res
-        .status(400)
-        .send(
-          `${amount_staked} staking amount is less than minimum staking allowed i.e ${pool.min_stake}.`
-        );
-    if (amount_staked > user.balance)
-      return res.status(400).send("INSUFFICIENT_BALANCE");
+    if (amount_staked < pool.min_stake) return res.status(400).send(`${amount_staked} staking amount is less than minimum staking allowed i.e ${pool.min_stake}.`);
+    if (amount_staked > user.balance) return res.status(400).send("INSUFFICIENT_BALANCE");
 
     //Update User Balnce and staking amount
     user.balance = user.balance - amount_staked;
@@ -42,9 +35,7 @@ router.post("/", [auth], async (req, res, next) => {
     });
 
     //Creat new staking
-    let staking = new Stakings(
-      _.pick(req.body, ["pool_id", "amount_staked", "auto_stake"])
-    );
+    let staking = new Stakings(_.pick(req.body, ["pool_id", "amount_staked", "auto_stake"]));
     staking.set({
       created_at: Date.now(),
       partner_id: user._id,
@@ -160,11 +151,8 @@ router.delete("/:id", async (req, res) => {
   try {
     const pool = await Pools.findByIdAndRemove(req.params.id);
 
-    if (!pool)
-      return res.status(404).send("The pool with given id was not found...");
-    res
-      .status(200)
-      .send({ message: "Following Pool Successfully Deleted", Pool: pool });
+    if (!pool) return res.status(404).send("The pool with given id was not found...");
+    res.status(200).send({ message: "Following Pool Successfully Deleted", Pool: pool });
   } catch (e) {
     return res.send(e.message);
   }
