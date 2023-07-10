@@ -47,7 +47,7 @@ router.put("/", [auth, admin], async (req, res, next) => {
     pool = await pool.save();
     return res.status(200).send({
       message: "Pool Updated Successfully",
-      pool: result,
+      pool: pool,
     });
   } catch (e) {
     return res.status(500).send(e.message);
