@@ -3,19 +3,26 @@ const Joi = require("joi");
 var mongoose = require("mongoose");
 
 var transactionsSchema = mongoose.Schema({
-  partner_id:{ 
+  partner_id: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'User',
-    required: true
+    ref: "User",
+    required: true,
   },
   type: {
     type: String,
     enum: {
       values: ["deposit", "withdrawl"],
-      message: "type must be either deposit or withdrawl"
-    }
+      message: "type must be either deposit or withdrawl",
+    },
   },
   amount: String,
+  status: {
+    type: String,
+    enum: {
+      values: ["Requested", "Served"],
+      message: "status must be either Requested or Served",
+    },
+  },
   created_at: {
     type: Date,
     required: true,
@@ -25,7 +32,7 @@ var transactionsSchema = mongoose.Schema({
 function validate(staking) {
   const schema = Joi.object({
     //partner_id: Joi.string().required(),
-    type: Joi.string().valid('deposit', 'withdrawl').required(),
+    type: Joi.string().valid("deposit", "withdrawl").required(),
     amount: Joi.number().required(),
   });
   return schema.validate(staking);
