@@ -47,4 +47,20 @@ router.get("/", [auth], async (req, res, next) => {
   }
 });
 
+//Read All requested withdrawl transactions only for admin
+router.get("/withdraw-requests", [auth, admin], async (req, res, next) => {
+  try {
+    let transactions = await Transactions.find({ $and: [{ type: "withdrawl" }, { status: "Requested" }] }).populate({
+      path: "partner_id",
+      options: { strictPopulate: false },
+    });
+    if (!transactions) {
+      return res.status(400).send({ message: "No transactions for withdraw requests found." });
+    }
+    return res.status(200).send(transactions);
+  } catch (e) {
+    return res.send(e.message);
+  }
+});
+
 module.exports = router;
