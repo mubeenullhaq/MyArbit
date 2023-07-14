@@ -1,6 +1,7 @@
 var express = require("express");
-const { User, validate } = require("../models/user");
+const { User, validate, validateUpdate } = require("../models/user");
 const auth = require("../middleware/auth");
+const admin = require("../middleware/admin");
 const _ = require("lodash");
 const bcrypt = require("bcrypt");
 var router = express.Router();
@@ -19,13 +20,9 @@ router.post("/login", async (req, res) => {
     // const createdAt = new mongoose.Types.ObjectId(user._id).getTimestamp()
     // console.log(createdAt)
     // return
-    const isValidPassword = await bcrypt.compare(
-      req.body.password,
-      user.password
-    );
+    const isValidPassword = await bcrypt.compare(req.body.password, user.password);
 
-    if (!isValidPassword)
-      return res.status(400).send("Invalid email or password");
+    if (!isValidPassword) return res.status(400).send("Invalid email or password");
 
     const token = user.generateAuthToken();
 
@@ -62,16 +59,7 @@ router.post("/", async (req, res, next) => {
     let user = await User.findOne({ email: lowerEmail });
     if (user) return res.status(400).send("User alredy registered");
 
-    user = new User(
-      _.pick(req.body, [
-        "name",
-        "email",
-        "number",
-        "password",
-        "location",
-        "locationDesc",
-      ])
-    );
+    user = new User(_.pick(req.body, ["name", "email", "number", "password", "location", "locationDesc"]));
     user.set({ email: lowerEmail });
 
     const salt = await bcrypt.genSalt(10);
@@ -94,15 +82,45 @@ router.post("/", async (req, res, next) => {
   }
 });
 //Update User by ID
-router.put("/", [auth], async (req, res, next) => {
+// router.put("/", [auth], async (req, res, next) => {
+//   try {
+//     const { error } = validate(req.body);
+//     if (error) return res.status(400).send(error.details[0].message);
+//     let users = await User.findOneAndUpdate({ _id: req.user._id }, _.pick(req.body, ["name", "email", "number", "location", "locationDesc"]), { new: true });
+//     if (!users) {
+//       return res.status(400).send({ message: "No user found to Update" });
+//     }
+//     // users[req.body.name] = req.body.value;
+//     // await users.save();
+//     return res.status(200).send(users);
+//   } catch (e) {
+//     return res.send(e);
+//   }
+// });
+
+//Update User for admin only
+router.put("/update/admin", [auth, admin], async (req, res, next) => {
   try {
     const { error } = validateUpdate(req.body);
     if (error) return res.status(400).send(error.details[0].message);
-    let users = await User.findOneAndUpdate(
-      { _id: req.user._id },
-      _.pick(req.body, ["name", "email", "number", "location", "locationDesc"]),
-      { new: true }
-    );
+    let users = await User.findOneAndUpdate({ _id: req.body._id }, _.pick(req.body, ["name", "email", "role", "balance", "total_staked"]), { new: true });
+    if (!users) {
+      return res.status(400).send({ message: "No user found to Update" });
+    }
+    // users[req.body.name] = req.body.value;
+    // await users.save();
+    return res.status(200).send(users);
+  } catch (e) {
+    return res.send(e);
+  }
+});
+
+// //Block User
+// //Update User for admin only
+router.put("/block", [auth, admin], async (req, res, next) => {
+  try {
+    //if () return res.status(400).send(error.details[0].message);
+    let users = await User.findOneAndUpdate({ _id: req.body.partnerId }, { isBlocked: req.body.status }, { new: true });
     if (!users) {
       return res.status(400).send({ message: "No user found to Update" });
     }
@@ -131,6 +149,9 @@ router.put("/blockUser/:id", async (req, res, next) => {
   }
 });
 
+//Search users based on filters
+router.get("/search", (req, res) => {});
+
 //Read Single User By ID
 router.get("/:id", async (req, res, next) => {
   try {
@@ -144,11 +165,11 @@ router.get("/:id", async (req, res, next) => {
   }
 });
 //Read All Users
-router.get("/", async (req, res, next) => {
+router.get("/", [auth, admin], async (req, res, next) => {
   try {
-    let users = await User.find();
+    let users = await User.find().select("-password");
     if (!users) {
-      return res.status(400).send({ message: "No user found" });
+      return res.status(400).send({ message: "NOT_FOUND" });
     }
     return res.status(200).send(users);
   } catch (e) {
@@ -161,8 +182,7 @@ router.delete("/:id", async (req, res) => {
   try {
     const user = await User.findByIdAndRemove(req.params.id);
 
-    if (!user)
-      return res.status(404).send("The user with given id was not found...");
+    if (!user) return res.status(404).send("The user with given id was not found...");
     res.send(user);
   } catch (e) {
     return res.send(e);
