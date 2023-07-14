@@ -80,17 +80,22 @@ function validate(user) {
 }
 
 function validateUpdate(user) {
-  const schema = {
-    name: joi.string().min(2).max(50),
-    number: joi.string(),
-    password: joi.string().min(5).max(255),
-    location: joi.string(),
-    locationDesc: joi.string(),
-    email: joi.string().min(5).max(255).email(),
-    isBlocked: joi.boolean(),
-    //picture
-  };
-  return joi.validate(user, schema);
+  const schema = Joi.object({
+    _id: Joi.string(),
+    name: Joi.string().min(2).max(50).required(),
+    role: Joi.date(),
+    email: Joi.string().email().required(),
+    balance: Joi.number(),
+    total_staked: Joi.number(),
+    role: Joi.string(),
+    isBlocked: Joi.boolean(),
+    refferal_code: Joi.string(),
+    reffered_by: Joi.string(),
+    country: Joi.string(),
+    //access_token: [Joi.string(), Joi.number()],
+    //  birth_year: Joi.number().integer().min(1900).max(2013),
+  });
+  return schema.validate(user);
 }
 
 var User = mongoose.model("User", userSchema);
